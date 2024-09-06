@@ -1,0 +1,91 @@
+<Project DefaultTargets="build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <!-- properties. -->
+    <PropertyGroup>
+        <ProjectName>Native2AsciiDotNet</ProjectName>
+        <BinDir>bin</BinDir>
+        <SrcDir>src</SrcDir>
+        <DebugDir>Debug</DebugDir>
+        <ReleaseDir>Release</ReleaseDir>
+        <ExeFileName>$(ProjectName).exe</ExeFileName>
+    </PropertyGroup>
+
+    <!-- items. -->
+    <ItemGroup>
+        <CSFile Include="$(SrcDir)\*.cs"/>
+        <Reference Include="System.dll"/>
+    </ItemGroup>
+
+    <!-- rebuild task. -->
+    <Target Name="rebuild" DependsOnTargets="clean;build">
+    </Target>
+
+    <!-- release task. -->
+    <Target Name="rerelease" DependsOnTargets="clean;release">
+    </Target>
+
+    <!-- debug init task. -->
+    <Target Name="initd" >
+        <MakeDir Directories="$(BinDir)\$(DebugDir)"
+            Condition="!Exists('$(BinDir)\$(DebugDir)')" />
+    </Target>
+
+    <!-- release init task. -->
+    <Target Name="initr" >
+        <MakeDir Directories="$(BinDir)\$(ReleaseDir)"
+            Condition="!Exists('$(BinDir)\$(ReleaseDir)')" />
+    </Target>
+
+    <!-- clean task. -->
+    <Target Name="clean" >
+        <RemoveDir Directories="$(BinDir)" />
+    </Target>
+
+    <!-- build task. -->
+    <Target Name="build" DependsOnTargets="initd">
+        <CSC Sources="@(CSFile)"
+            References="@(Reference)"
+            OutputAssembly="$(BinDir)\$(DebugDir)\$(ExeFileName)"
+            Platform="anycpu"
+            TargetType="exe" />
+    </Target>
+
+    <!-- release task. -->
+    <Target Name="release" DependsOnTargets="initr">
+        <CSC Sources="@(CSFile)"
+            References="@(Reference)"
+            OutputAssembly="$(BinDir)\$(ReleaseDir)\$(ExeFileName)"
+            Platform="anycpu"
+            Optimize="true"
+            TargetType="exe" />
+    </Target>
+
+    <!-- run task. -->
+    <Target Name="run" DependsOnTargets="build">
+        <Exec Command="$(BinDir)\$(DebugDir)\$(ExeFileName)"/>
+        <Message Text="アプリケーションを実行しました。" />
+    </Target>
+
+    <!-- texta task. -->
+    <Target Name="testan" DependsOnTargets="build">
+        <Exec Command="$(BinDir)\$(DebugDir)\$(ExeFileName) -encoding ./sample/aaa_u.properties"/>
+        <Message Text="アプリケーションを実行しました。" />
+    </Target>
+
+    <Target Name="testau" DependsOnTargets="build">
+        <Exec Command="$(BinDir)\$(DebugDir)\$(ExeFileName) -encoding UTF-8 ./sample/aaa_u.properties"/>
+        <Message Text="アプリケーションを実行しました。" />
+    </Target>
+
+    <!-- textu task. -->
+    <Target Name="testun" DependsOnTargets="build">
+        <Exec Command="$(BinDir)\$(DebugDir)\$(ExeFileName) -reverse ./sample/aaa_a.properties"/>
+        <Message Text="アプリケーションを実行しました。" />
+    </Target>
+
+    <!-- textu task. -->
+    <Target Name="testuu" DependsOnTargets="build">
+        <Exec Command="$(BinDir)\$(DebugDir)\$(ExeFileName) -encoding UTF-8 -reverse ./sample/aaa_a.properties"/>
+        <Message Text="アプリケーションを実行しました。" />
+    </Target>
+
+</Project>
